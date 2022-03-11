@@ -12,8 +12,11 @@ Many useful scripts will also be uploaded in this repo. Have fun using this repo
 * Logistic regression (binary classification).
 
 ## Neural Network models in this repo
+### Shallow nets
 * Perceptron (single layer)
 * Adaline (Single layer)
+### Deep nets
+Work is going on.
 
 ## Explanations for the ML algorithms
 * [Understanding Perceptron](https://medium.com/@mr.sk12112002/understanding-perceptron-8e82a5a97ea)<br>
