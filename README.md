@@ -27,7 +27,6 @@ Work is going on.
 ## Upcoming scripts
 * StandardScaler
 * MinMaxScaler
-* LabelEncoder
 * Plot decision boundaries
 
 ## Ideas with ML
