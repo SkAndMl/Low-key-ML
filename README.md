@@ -24,6 +24,11 @@ Work is going on.
 * [Machine Learning Optimization Algorithms 1: Gradient Descent](https://medium.com/mlearning-ai/machine-learning-optimization-algorithms-1-gradient-descent-258dfb5987e1)<br>
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 
+## Upcoming scripts
+* StandardScaler
+* MinMaxScaler
+* LabelEncoder
+
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
 * [Optimizing web desing using machine learning](https://medium.com/mlearning-ai/optimizing-web-design-using-machine-learning-1f3ac80ac4c1)
