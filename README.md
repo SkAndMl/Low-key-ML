@@ -28,6 +28,11 @@ Work is going on.
 * StandardScaler
 * MinMaxScaler
 * Plot decision boundaries
+* Classification report for binary classification
+* Precision
+* Recall
+* Accuracy
+* MAE, MSE
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
