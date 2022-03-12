@@ -28,6 +28,7 @@ Work is going on.
 * StandardScaler
 * MinMaxScaler
 * LabelEncoder
+* Plot decision boundaries
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
