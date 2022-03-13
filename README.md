@@ -25,7 +25,6 @@ Work is going on.
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 
 ## Upcoming scripts
-* StandardScaler
 * MinMaxScaler
 * Plot decision boundaries
 * Classification report for binary classification
@@ -33,6 +32,7 @@ Work is going on.
 * Recall
 * Accuracy
 * MAE, MSE
+* F1-score
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
