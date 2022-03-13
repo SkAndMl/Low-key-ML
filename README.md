@@ -25,7 +25,6 @@ Work is going on.
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 
 ## Upcoming scripts
-* MinMaxScaler
 * Plot decision boundaries
 * Classification report for binary classification
 * Precision
