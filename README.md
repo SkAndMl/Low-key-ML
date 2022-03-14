@@ -27,9 +27,6 @@ Work is going on.
 ## Upcoming scripts
 * Plot decision boundaries
 * Classification report for binary classification
-* Precision
-* Recall
-* Accuracy
 * MAE, MSE
 * F1-score
 
