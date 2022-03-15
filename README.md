@@ -28,7 +28,6 @@ Work is going on.
 * Plot decision boundaries
 * Classification report for binary classification
 * MAE, MSE
-* F1-score
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
