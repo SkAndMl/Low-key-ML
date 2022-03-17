@@ -34,4 +34,6 @@ Work is going on.
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
 * [Optimizing web desing using machine learning](https://medium.com/mlearning-ai/optimizing-web-design-using-machine-learning-1f3ac80ac4c1)
 
-**Note**: If anyone wants to contribute to this repo you can contact me [here](https://www.linkedin.com/in/sathya-krishnan-suresh-914763217/)
+**Note**: 
+* If anyone wants to contribute to this repo you can contact me [here](https://www.linkedin.com/in/sathya-krishnan-suresh-914763217/)
+* These are the beta versions. They are being constantly checked for bugs and if I find any I modify the code to overcome the bugs. If anyone using this repo finds a bug please share it with me in the above link. 
