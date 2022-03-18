@@ -25,7 +25,7 @@ Work is going on.
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 
 ## Upcoming scripts
-* MAE, MSE
+* MSE
 * LinearSVC
 * Multinomial logistic regression or Softmax regression
 * PolynomialFeatures
@@ -33,6 +33,11 @@ Work is going on.
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
 * [Optimizing web desing using machine learning](https://medium.com/mlearning-ai/optimizing-web-design-using-machine-learning-1f3ac80ac4c1)
+
+## Comparing Low-Key ML with Scikit-Learn
+Comparing Low-Key ML's Linear Regression model with Scikit-Learn Linear Regression<br>
+![Comparison with sklearn](https://user-images.githubusercontent.com/86184014/159046258-3f09df72-7d63-4a85-91c6-f06e5afe3f66.png)
+
 
 **Note**: 
 * If anyone wants to contribute to this repo you can contact me [here](https://www.linkedin.com/in/sathya-krishnan-suresh-914763217/)
