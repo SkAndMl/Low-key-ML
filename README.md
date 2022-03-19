@@ -28,6 +28,8 @@ Work is going on.
 * LinearSVC
 * Multinomial logistic regression or Softmax regression
 * PolynomialFeatures
+* GridSearchCV
+* cross_val_score
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
