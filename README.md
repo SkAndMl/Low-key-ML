@@ -18,11 +18,12 @@ Many useful scripts will also be uploaded in this repo. Have fun using this repo
 ### Deep nets
 Work is going on.
 
-## Explanations for the ML algorithms
+## Articles related to Classical ML
 * [Understanding Perceptron](https://medium.com/@mr.sk12112002/understanding-perceptron-8e82a5a97ea)<br>
 * [Understanding Adaline](https://medium.com/mlearning-ai/understanding-adaline-da79ab8bbc5a)<br>
 * [Machine Learning Optimization Algorithms 1: Gradient Descent](https://medium.com/mlearning-ai/machine-learning-optimization-algorithms-1-gradient-descent-258dfb5987e1)<br>
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
+* [Hyperplane, Maximal Margin Classifier and Soft Margin Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-2-support-vector-machine-3fba8f1c9534)
 
 ## Upcoming scripts
 * LinearSVC
