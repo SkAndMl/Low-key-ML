@@ -28,7 +28,6 @@ Work is going on.
 ## Upcoming scripts
 * LinearSVC
 * Multinomial logistic regression or Softmax regression
-* PolynomialFeatures
 * GridSearchCV
 * cross_val_score
 
