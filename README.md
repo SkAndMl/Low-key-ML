@@ -24,6 +24,7 @@ Work is going on.
 * [Machine Learning Optimization Algorithms 1: Gradient Descent](https://medium.com/mlearning-ai/machine-learning-optimization-algorithms-1-gradient-descent-258dfb5987e1)<br>
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 * [Hyperplane, Maximal Margin Classifier and Soft Margin Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-2-support-vector-machine-3fba8f1c9534)
+* [Decision Tree Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-3-decision-tree-801d59011780)
 
 ## Upcoming scripts
 * LinearSVC
