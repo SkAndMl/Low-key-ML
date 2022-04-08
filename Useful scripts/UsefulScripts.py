@@ -90,3 +90,11 @@ def classifiers_metrics(models,X,y,test_size=0.1,random_state=42):
                                                 "Accuracy":accuracy_list,
                                                 "F1 Score":f1_list})
     return metric_df
+
+def gini_impurity(value_set):
+  # node impurity measurement for decision tree
+  total_num = np.sum(value_set)
+  gini = 1
+  for j in value_set:
+    gini -= (j/total_num)**2
+  return np.round(gini,3)
