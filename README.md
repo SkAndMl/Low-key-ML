@@ -18,7 +18,7 @@ Many useful scripts will also be uploaded in this repo. Have fun using this repo
 ### Deep nets
 Work is going on.
 
-## Articles related to Classical ML
+## Articles to go along with this repo
 * [Understanding Perceptron](https://medium.com/@mr.sk12112002/understanding-perceptron-8e82a5a97ea)<br>
 * [Understanding Adaline](https://medium.com/mlearning-ai/understanding-adaline-da79ab8bbc5a)<br>
 * [Machine Learning Optimization Algorithms 1: Gradient Descent](https://medium.com/mlearning-ai/machine-learning-optimization-algorithms-1-gradient-descent-258dfb5987e1)<br>
