@@ -16,7 +16,7 @@ Many useful scripts will also be uploaded in this repo. Have fun using this repo
 * Perceptron (single layer)
 * Adaline (Single layer)
 ### Deep nets
-Work is going on.
+CNN image classification architectures
 
 ## Articles to go along with this repo
 * [Understanding Perceptron](https://medium.com/@mr.sk12112002/understanding-perceptron-8e82a5a97ea)<br>
@@ -27,10 +27,10 @@ Work is going on.
 * [Decision Tree Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-3-decision-tree-801d59011780)
 
 ## Upcoming scripts
-* LinearSVC
-* Multinomial logistic regression or Softmax regression
+* CNN image classification architectures
 * GridSearchCV
 * cross_val_score
+* Confusion matrix
 
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
