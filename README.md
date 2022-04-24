@@ -1,5 +1,5 @@
 # Implementing ML algorithms
-This repository is dedicated for the code that I write to implement machine learning algorithms. Although there are highly optimized and readily available libraries, the code here offers a quick peek into the algorithms and they will help you to understand the algorithms better<br><br>
+This repository is dedicated for the code that I write to implement machine learning algorithms,techniques,scripts,pipelines and many useful functions. Although there are highly optimized and readily available libraries, the code here offers a quick peek into the algorithms and they will help you to understand the algorithms better. The scripts in the "Useful Scripts" section has a lot of functions that will quicken the modelling process and I use them regularly while building models.<br><br>
 The explanations for some algorithms in this repo are published in [Medium](https://medium.com/@mr.sk12112002)<br>
 Many useful scripts will also be uploaded in this repo. Have fun using this repo<br><br>
 
