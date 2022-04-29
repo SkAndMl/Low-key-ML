@@ -25,6 +25,7 @@ CNN image classification architectures
 * [Classification Algorithms-1: Logistic Regression Part-1](https://medium.com/mlearning-ai/classification-algorithms-1-logistic-regression-part-1-a2b0dab31b5a)
 * [Hyperplane, Maximal Margin Classifier and Soft Margin Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-2-support-vector-machine-3fba8f1c9534)
 * [Decision Tree Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-3-decision-tree-801d59011780)
+* [Evaluating Classification Models](https://medium.com/@mr.sk12112002/evaluating-classification-models-943758b285be)
 
 ## Upcoming scripts
 * CNN image classification architectures
