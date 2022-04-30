@@ -1,4 +1,11 @@
 def scatter_of(column, data, hue=None, thresh=0.25):
+    """
+    This is used to display the scatterplots of all continuous valued cols with respect to another column.
+    column -> the column with which other features have to be compared.
+    data -> dataframe
+    hue -> categorical column to add a 3rd dimesnion to the scatterplots.
+    thresh -> this value is used to determine whether a given column is a continuous valued column or not.
+    """
     import pandas as pd
     import matplotlib.pyplot as plt
     import seaborn as sns

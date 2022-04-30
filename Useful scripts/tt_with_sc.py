@@ -1,4 +1,11 @@
 def tt_with_sc(df,test_size=0.2,random_state=42,include_cols=None):
+  """
+  This function is used to split and simultaneously scale the continuous valued columns.
+  df -> dataframe, with the target column being the last column.
+  test_size -> size of the test data.
+  random_state -> random seed for splitting the data.
+  include_cols -> specify certain columns alone to be scaled leaving the remaining unscaled.
+  """
   import numpy as np
   from sklearn.model_selection import train_test_split
   import pandas as pd

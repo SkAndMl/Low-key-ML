@@ -1,4 +1,11 @@
 def view_some_image(X,y,r_size=28,cmap="gray"):
+  """
+  This function displays random images from the passed features.
+  X -> features or pixel values.
+  y -> target value
+  size -> it is the dimension of the image
+  cmap -> specifies color map of the image
+  """
   import numpy as np
   import  matplotlib.pyplot as plt
   random_index = np.random.randint(0,len(X))
