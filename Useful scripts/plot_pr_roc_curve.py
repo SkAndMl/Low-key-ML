@@ -1,4 +1,12 @@
 def plot_pr_roc_curve(model,X,y,test=True,test_size=0.2,random_state=42):
+  """
+  This function is used to plot both the precision-recall curve and roc-curve for both training and test
+  data after splitting the data.
+  model -> base estimator
+  X -> feature set
+  y -> target set
+  test -> if you have not trained the model yet, test is usedto take care of that. Default value is true
+  """
   from sklearn.model_selection import train_test_split
   from sklearn.metrics import precision_recall_curve,roc_curve
   import seaborn as sns
