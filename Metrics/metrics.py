@@ -169,3 +169,63 @@ def classification_report(y_true,y_pred):
         report_df.iat[i,2] = f1_score(y_true=y_true_mod,y_pred=y_pred_mod)  # f1_score for the ith class label
 
     return report_df
+
+def true_positive(y_true,y_pred):
+
+    import numpy as np
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.sum((y_true==y_pred)&(y_true==1))
+
+def false_positive(y_true,y_pred):
+
+     import numpy as np
+     y_true = np.array(y_true)
+     y_pred = np.array(y_pred)
+     return np.sum((y_pred==1)&(y_true==0))
+
+def false_negative(y_true,y_pred):
+
+    import numpy as np
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.sum((y_pred==0)&(y_true==1))
+
+def micro_precision(y_true,y_pred):
+    import numpy as np
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    unq_classes = np.unique(y_true)
+    tp,fp = 0,0
+    for c in unq_classes:
+        tp += true_positive(y_true==c,y_pred==c)
+        fp += false_positive(y_true==c,y_pred==c)
+    return tp/(tp+fp)
+
+def macro_precision(y_true,y_pred):
+    import numpy as np
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    unq_classes = np.unique(y_true)
+    prec_classes = []
+    for c in unq_classes:
+        tp = true_positive(y_true==c,y_pred==c)
+        fp = false_positive(y_true==c,y_pred==c)
+        precision_c = tp/(tp+fp)
+        prec_classes.append(precision_c)
+    return np.mean(prec_classes)
+
+def weighted_precision(y_true,y_pred):
+    import numpy as np
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    unq_classes = np.unique(y_true)
+    len_classes = [np.sum(y_true==c) for c in unq_classes]
+    prec_classes = []
+    for c in unq_classes:
+        tp = true_positive(y_true == c, y_pred == c)
+        fp = false_positive(y_true == c, y_pred == c)
+        precision_c = tp / (tp + fp)
+        prec_classes.append(precision_c)
+    prec_classes = np.array(prec_classes)
+    return np.average(prec_classes,weights=len_classes)
