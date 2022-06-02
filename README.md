@@ -26,6 +26,7 @@ CNN image classification architectures
 * [Hyperplane, Maximal Margin Classifier and Soft Margin Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-2-support-vector-machine-3fba8f1c9534)
 * [Decision Tree Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-3-decision-tree-801d59011780)
 * [Evaluating Classification Models](https://medium.com/@mr.sk12112002/evaluating-classification-models-943758b285be)
+* [Dimensionality Reduction: Principal Component Analysis](https://medium.com/mlearning-ai/dimensionality-reduction-principal-component-analysis-d990233070e9)
 
 ## Upcoming scripts
 * CNN image classification architectures
