@@ -27,6 +27,7 @@ CNN image classification architectures
 * [Decision Tree Classifier](https://medium.com/@mr.sk12112002/classification-algorithms-3-decision-tree-801d59011780)
 * [Evaluating Classification Models](https://medium.com/@mr.sk12112002/evaluating-classification-models-943758b285be)
 * [Dimensionality Reduction: Principal Component Analysis](https://medium.com/mlearning-ai/dimensionality-reduction-principal-component-analysis-d990233070e9)
+* [Ensemble models](https://medium.com/@mr.sk12112002/classification-algorithms-4-ensemble-models-ceecd5020f19)
 
 ## Upcoming scripts
 * CNN image classification architectures
