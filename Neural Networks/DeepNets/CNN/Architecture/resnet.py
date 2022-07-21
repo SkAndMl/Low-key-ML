@@ -7,16 +7,16 @@ class ResidualUnit(tf.keras.layers.Layer):
         super().__init__(**kwargs)
         self.activation = tf.keras.activations.get(activation)
         self.main_layers = [
-            Conv2D(filters, 3, strides=strides, padding="same"),
+            Conv2D(filters, 3, strides=strides, padding="same",use_bias=False),
             BatchNormalization(),
             self.activation,
-            Conv2D(filters, 3, strides=1, padding="same"),
+            Conv2D(filters, 3, strides=1, padding="same",use_bias=False),
             BatchNormalization()
         ]
         self.skip_layers = []
         if strides > 1:
             self.skip_layers = [
-                Conv2D(filters, 1, strides=strides, padding="same"),
+                Conv2D(filters, 1, strides=strides, padding="same",use_bias=False),
                 BatchNormalization()
             ]
 
