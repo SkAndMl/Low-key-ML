@@ -38,6 +38,7 @@ CNN image classification architectures
 ## Ideas with ML
 * [ML in local food chain](https://medium.com/@mr.sk12112002/trend-recognition-and-forecasting-for-local-food-chain-689ac647d61d)<br>
 * [Optimizing web desing using machine learning](https://medium.com/mlearning-ai/optimizing-web-design-using-machine-learning-1f3ac80ac4c1)
+* [CNN: Neural Style Transfer](https://medium.com/@mr.sk12112002/cnn-neural-style-transfer-88829c6e8f75) 
 
 ## Comparing Low-Key ML with Scikit-Learn
 Comparing Low-Key ML's Linear Regression model with Scikit-Learn Linear Regression<br>
