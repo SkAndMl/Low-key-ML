@@ -17,7 +17,7 @@ def window_data(data, window=7, horizon=1):
         raise ValueError("Either the window or the horizon is too large \
                           for the given data")
    
-   X = np.empty(shape=(len(data)-window-horizon+1,window))
+    X = np.empty(shape=(len(data)-window-horizon+1,window))
     y = np.empty(shape=(len(data)-window-horizon+1, horizon))
     
 
