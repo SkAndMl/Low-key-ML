@@ -56,15 +56,27 @@ class SpeculativeDecoder:
           prompt = self.tokenizer.apply_chat_template(
               messages,
               tokenize=False,
-              add_generation_prompt=True,
-              enable_thinking=False
+              add_generation_prompt=True
           )
       input_tokens: torch.Tensor = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
       output_tokens: torch.Tensor = deepcopy(input_tokens).to(self.device)
 
-      while output_tokens.shape[1] - input_tokens.shape[1] < n:
+      eos_token_id = self.tokenizer.eos_token_id
+      stop = False
+
+      while output_tokens.shape[1] - input_tokens.shape[1] < n and not stop:
+          # step_tokens = self.step(output_tokens)
+          # chunk = self.tokenizer.decode(step_tokens[:, output_tokens.shape[1]:].detach().cpu().tolist()[0])
+          # yield chunk
+          # output_tokens = step_tokens
           step_tokens = self.step(output_tokens)
-          chunk = self.tokenizer.decode(step_tokens[:, output_tokens.shape[1]:].detach().cpu().tolist()[0])
+          new_tokens = step_tokens[:, output_tokens.shape[1]:]
+
+          # Check for eos_token in the newly generated tokens
+          if eos_token_id is not None and (new_tokens == eos_token_id).any():
+              stop = True
+
+          chunk = self.tokenizer.decode(new_tokens[0].detach().cpu().tolist(), skip_special_tokens=True)
           yield chunk
           output_tokens = step_tokens
 
@@ -148,7 +160,6 @@ class SpeculativeDecoder:
                 [{"role": "user", "content": prompt}], 
                 tokenize=False, 
                 add_generation_prompt=True,
-                enable_thinking=False
             )
         input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
         start = time.time()
@@ -157,20 +168,34 @@ class SpeculativeDecoder:
             max_new_tokens=n,
             do_sample=False,
             pad_token_id=self.tokenizer.pad_token_id,
+            eos_token_id=self.tokenizer.eos_token_id
         )
         end = time.time()
         results_dict = {
             "greedy_decoding_time_taken": end-start,
-            "generated_text": self.tokenizer.decode(output_ids[0])
+            "generated_text": self.tokenizer.decode(output_ids[0][input_ids.shape[1]:])
         }
         return results_dict
-    
 
-sd = SpeculativeDecoder(
-    target_id="Qwen/Qwen3-1.7B",
-    draft_id="Qwen/Qwen3-0.6B",
-    # target_id="EleutherAI/pythia-410m",
-    # draft_id="EleutherAI/pythia-70m",
-    gamma=10,
-    device="cuda" if torch.cuda.is_available() else "cpu"
-)
+if __name__ == "__main__":
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("--prompt", "-p", type=str, required=True)
+    parser.add_argument("--num_tokens", "-n", type=int, required=True)
+    parser.add_argument("--gamma", "-g", type=int, required=True)
+
+    args = parser.parse_args()
+
+    sd = SpeculativeDecoder(
+        target_id="EleutherAI/pythia-410m",
+        draft_id="EleutherAI/pythia-70m",
+        gamma=args.gamma,
+        device="cuda" if torch.cuda.is_available() else "cpu"
+    )
+
+    results_dict = sd(
+        prompt=args.prompt,
+        n=args.num_tokens,
+        stream=True
+    )
+    print(results_dict)
