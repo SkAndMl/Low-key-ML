@@ -40,12 +40,13 @@ class SpeculativeDecoder:
         self.accepted_counts: list[int] = []
         self.target_model = AutoModelForCausalLM.from_pretrained(
             self.target_id, torch_dtype=self.dtype
-        ).to(self.device)
+        ).to(self.device).eval()
         self.draft_model = AutoModelForCausalLM.from_pretrained(
             self.draft_id, torch_dtype=self.dtype
-        ).to(self.device)
+        ).to(self.device).eval()
         self.tokenizer = AutoTokenizer.from_pretrained(self.draft_id)
     
+    @torch.inference_mode()
     def _itertext(self, prompt: str, n: int):
       if hasattr(self.tokenizer, "apply_chat_template"):
           print(f"{self.draft_id}'s tokenizer has a chat template. Using it...")
@@ -56,7 +57,8 @@ class SpeculativeDecoder:
           prompt = self.tokenizer.apply_chat_template(
               messages,
               tokenize=False,
-              add_generation_prompt=True
+              add_generation_prompt=True,
+              enable_thinking=False
           )
       input_tokens: torch.Tensor = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
       output_tokens: torch.Tensor = deepcopy(input_tokens).to(self.device)
@@ -97,6 +99,7 @@ class SpeculativeDecoder:
         return_dict["forward_passes_saved"] = sum(self.accepted_counts)
         return return_dict
 
+    @torch.inference_mode()
     def step(self, tokens: torch.Tensor) -> torch.Tensor:
         draft_token_logits, draft_tokens = self._draft_step(tokens)
         target_token_logits: torch.Tensor = self.target_model(
@@ -139,6 +142,7 @@ class SpeculativeDecoder:
         self.accepted_counts.append(accepted_tokens.shape[1])
         return torch.cat([tokens, accepted_tokens, new_token], dim=1).to(self.device)
     
+    @torch.inference_mode()
     def _draft_step(self, tokens: torch.Tensor) -> Tuple[torch.Tensor]:
         draft_token_logits = []
         _tokens = deepcopy(tokens).to(self.device)
@@ -154,26 +158,36 @@ class SpeculativeDecoder:
         
         return torch.stack(draft_token_logits, dim=0).unsqueeze(0).to(self.device), _tokens[:, -self.gamma:]
     
+    @torch.inference_mode()
     def greedy_decode(self, prompt: str, n: int) -> dict:
         if hasattr(self.tokenizer, "apply_chat_template"):
             prompt = self.tokenizer.apply_chat_template(
                 [{"role": "user", "content": prompt}], 
                 tokenize=False, 
                 add_generation_prompt=True,
+                enable_thinking=False
             )
+
         input_ids = self.tokenizer(prompt, return_tensors="pt")["input_ids"].to(self.device)
+        generated_ids = input_ids.clone()
+
         start = time.time()
-        output_ids = self.target_model.generate(
-            input_ids,
-            max_new_tokens=n,
-            do_sample=False,
-            pad_token_id=self.tokenizer.pad_token_id,
-            eos_token_id=self.tokenizer.eos_token_id
-        )
+        for _ in range(n):
+            with torch.no_grad():
+                outputs = self.target_model(input_ids=generated_ids)
+                next_token_logits = outputs.logits[:, -1, :]
+                next_token = torch.argmax(next_token_logits, dim=-1).unsqueeze(-1)
+                generated_ids = torch.cat([generated_ids, next_token], dim=-1)
+
+                if next_token.item() == self.tokenizer.eos_token_id:
+                    break
         end = time.time()
+
+        generated_text = self.tokenizer.decode(generated_ids[0][input_ids.shape[1]:], skip_special_tokens=True)
+
         results_dict = {
-            "greedy_decoding_time_taken": end-start,
-            "generated_text": self.tokenizer.decode(output_ids[0][input_ids.shape[1]:])
+            "greedy_decoding_time_taken": end - start,
+            "generated_text": generated_text
         }
         return results_dict
 
