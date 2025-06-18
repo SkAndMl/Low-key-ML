@@ -1,122 +1,129 @@
 from collections import defaultdict
-import regex as re
 from tqdm import tqdm
 from typing import List, Dict, Tuple
 import json
-
+import regex as re
+import os
 
 class BPE:
 
-    def __init__(self, config_file_path: str) -> None:
-        with open(config_file_path, "r") as f:
-            vocab = json.loads(f.read())
+    reg_pat = re.compile(
+        r"""'s|'ve|'d|'ll|'t|'re|'m| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
+        flags=re.IGNORECASE
+    )  
 
-        self.merges: List[List[int]] = vocab["merges"]
-        self.id2pair: Dict[int, List[int]] = {int(k): tuple(v) for k, v in vocab["id2pair"].items()}
-        self.pair2id = {v: k for k, v in self.id2pair.items()}
-        self.reg_pat = re.compile(
-            r"""'s|'ve|'d|'ll|'t|'re|'m| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
-            flags=re.IGNORECASE
-        )  
+    def __init__(self, tokenizer_dir: str) -> None:
+        self.tokenizer_dir = tokenizer_dir
+        merges_path = os.path.join(tokenizer_dir, "merges.json")
+        vocab_path = os.path.join(tokenizer_dir, "vocab.json")
+
+        if os.path.exists(merges_path) and os.path.exists(vocab_path):
+            with open(merges_path, "r") as f:
+                merges = json.load(f)
+            self.merges = {(int(k.split(",")[0]), int(k.split(",")[1])): v for k, v in merges.items()}
+
+            with open(vocab_path, "r") as f:
+                vocab = json.load(f)
+            self.vocab = {int(k): bytes(v) for k, v in vocab.items()}
+        else:
+            self.merges = {}
+            self.vocab = {}
+
 
     def encode(self, text: str) -> List[int]:
         words = re.findall(self.reg_pat, text)
         token_seqs = [list(w.encode("utf-8")) for w in words]
-        for merge in self.merges:
-            new_token_seqs = []
-            for byte_seq in token_seqs:
-                new_seq = []
-                i = 0
-                while i < len(byte_seq) - 1:
-                    if byte_seq[i] == merge[0] and byte_seq[i+1] == merge[1]:
-                        new_seq.append(self.pair2id[tuple(merge)])
-                        i += 2
-                    else:
-                        new_seq.append(byte_seq[i])
-                        i += 1
-                if i == len(byte_seq) - 1:
-                    new_seq.append(byte_seq[i])
-                new_token_seqs.append(new_seq)
-            token_seqs = new_token_seqs[:]
-
+        while True:
+            freq = BPE.get_stats(token_seqs)
+            if not freq:
+                break
+            pair = min(freq, key=lambda p: self.merges.get(p, float("inf")))
+            if pair not in self.merges:
+                break
+            token_seqs = BPE.merge(token_seqs, pair, self.merges[pair])
+        
         return [tok for seq in token_seqs for tok in seq]
 
-
     def decode(self, tokens: List[int]) -> str:
-        decoded_tokens = tokens[:]
-        while True:
-            if all(dec_tok <= 255 for dec_tok in decoded_tokens):
-                break
-            _decoded_tokens = []
-            for tok in decoded_tokens:
-                if tok <= 255:
-                    _decoded_tokens.append(tok)
-                else:
-                    _decoded_tokens.extend(self.id2pair[tok])
-            decoded_tokens = _decoded_tokens[:]
-
-        return bytes(decoded_tokens).decode("utf-8", errors="replace")
+        _bytes = b"".join(self.vocab[token_id] for token_id in tokens)
+        return _bytes.decode(encoding="utf-8", errors="replace")
 
     @staticmethod
-    def train(text: str, num_merges: int, save_path: str):
-        reg_pat = re.compile(
-            r"""'s|'ve|'d|'ll|'t|'re|'m| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
-            flags=re.IGNORECASE
-        ) 
-
-        def _get_stats(tokens: List[List[int]]) -> Dict[Tuple, int]:
+    def get_stats(tokens: List[List[int]]) -> Dict[Tuple, int]:
             freq = defaultdict(int)
-            for byte_seq in tokens:
-                for i in range(1, len(byte_seq)):
-                    freq[byte_seq[i-1], byte_seq[i]] += 1
+            for seq in tokens:
+                for i in range(1, len(seq)):
+                    freq[seq[i-1], seq[i]] += 1
             return freq
 
-        def _merge(tokens: List[List[int]], pair: Tuple[int], new_id: int) -> List[List[int]]:
-            new_tokens = []
-            for byte_seq in tokens:
-                new_byte_seq = []
-                i = 0
-                while i < len(byte_seq) - 1:
-                    if byte_seq[i] == pair[0] and byte_seq[i+1] == pair[1]:
-                        new_byte_seq.append(new_id)
-                        i += 2
-                    else:
-                        new_byte_seq.append(byte_seq[i])
-                        i += 1
-                
-                if i==len(byte_seq) - 1:
-                    new_byte_seq.append(byte_seq[-1])
-                new_tokens.append(new_byte_seq)
+    @staticmethod
+    def merge(tokens: List[List[int]], pair: Tuple[int], new_id: int) -> List[List[int]]:
+        new_tokens = []
+        for byte_seq in tokens:
+            new_byte_seq = []
+            i = 0
+            while i < len(byte_seq) - 1:
+                if byte_seq[i] == pair[0] and byte_seq[i+1] == pair[1]:
+                    new_byte_seq.append(new_id)
+                    i += 2
+                else:
+                    new_byte_seq.append(byte_seq[i])
+                    i += 1
             
-            return new_tokens
+            if i==len(byte_seq) - 1:
+                new_byte_seq.append(byte_seq[-1])
+            new_tokens.append(new_byte_seq)
+        
+        return new_tokens
 
-        words = re.findall(pattern=reg_pat, string=text)
+    @staticmethod
+    def build_vocab(merges: Dict[Tuple[int], int]) -> Dict[int, List]:
+        vocab = {token_id: bytes([token_id]) for token_id in range(256)}
+        for (p0, p1), token_id in sorted(merges.items(), key=lambda merge: merge[1]):
+            vocab[token_id] = vocab[p0] + vocab[p1]
+        return vocab
+ 
+    @classmethod
+    def train(cls, text: str, num_merges: int, tokenizer_dir: str) -> "BPE":
+        merges: Dict[Tuple[int], int] = {}
+        words = re.findall(pattern=BPE.reg_pat, string=text)
         tokens = [list(w.encode("utf-8")) for w in words]
-        merges = []
         for i in tqdm(range(num_merges)):
-            freq = _get_stats(tokens)
+            freq = cls.get_stats(tokens)
             if len(freq) == 0:
                 break
             pair = max(freq, key=freq.get)
             new_id = 256 + i
-            merges.append(pair)
-            tokens = _merge(tokens, pair, new_id)
+            merges[pair] = new_id
+            tokens = cls.merge(tokens, pair, new_id)
         
-        with open(save_path, "w") as f:
-            json_to_dump = {
-                "merges": merges,
-                "id2pair": {str(256+i): list(pair) for i, pair in enumerate(merges)}
-            }
-            f.write(json.dumps(json_to_dump))
-    
+        vocab = cls.build_vocab(merges)
 
+        ## save
+        os.makedirs(tokenizer_dir, exist_ok=True)
+
+        merges_path = os.path.join(tokenizer_dir, "merges.json")
+        vocab_path = os.path.join(tokenizer_dir, "vocab.json")
+
+        with open(merges_path, "w") as f:
+            json.dump({f"{pair[0]},{pair[1]}": idx for pair, idx in merges.items()}, f, indent=2)
+
+        with open(vocab_path, "w") as f:
+            json.dump({str(idx): list(byte_seq) for idx, byte_seq in vocab.items()}, f, indent=2)
+        
+        return BPE(tokenizer_dir)
+
+        
 
 if __name__ == "__main__":
     with open("data/tinystories/train.txt", "r") as f:
         text = f.read()
     
-    BPE.train(
-        text=text, 
+    tokenizer = BPE.train(
+        text=text,
         num_merges=3000,
-        save_path="vocab.json"
+        tokenizer_dir="tokenizer"
     )
+    string = "Hi how are you?"
+    print(f"encoded: {tokenizer.encode(string)}")
+    print(f"decoded: {tokenizer.decode(tokenizer.encode(string))}")
