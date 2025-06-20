@@ -1,6 +1,6 @@
 from collections import defaultdict
 from tqdm import tqdm
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Sequence, Optional
 import json
 import regex as re
 import os
@@ -12,49 +12,92 @@ class BPE:
         flags=re.IGNORECASE
     )  
 
-    def __init__(self, tokenizer_dir: str) -> None:
+    def __init__(self, tokenizer_dir: str, special_tokens: Optional[Sequence]=None) -> None:
         self.tokenizer_dir = tokenizer_dir
         merges_path = os.path.join(tokenizer_dir, "merges.json")
         vocab_path = os.path.join(tokenizer_dir, "vocab.json")
 
-        if os.path.exists(merges_path) and os.path.exists(vocab_path):
-            with open(merges_path, "r") as f:
-                merges = json.load(f)
-            self.merges = {(int(k.split(",")[0]), int(k.split(",")[1])): v for k, v in merges.items()}
+        assert os.path.exists(merges_path) and os.path.exists(vocab_path)
 
-            with open(vocab_path, "r") as f:
-                vocab = json.load(f)
-            self.vocab = {int(k): bytes(v) for k, v in vocab.items()}
-        else:
-            self.merges = {}
-            self.vocab = {}
+        with open(merges_path, "r") as f:
+            merges = json.load(f)
+        self.merges = {(int(k.split(",")[0]), int(k.split(",")[1])): v for k, v in merges.items()}
 
+        with open(vocab_path, "r") as f:
+            vocab = json.load(f)
+        self.vocab = {int(k): bytes(v) for k, v in vocab.items()}
+        
+        self._init_special_tokens(special_tokens)
+    
+    def _init_special_tokens(self, special_tokens: Sequence) -> None:
+        self.special_tokens_map = {}
+        self.inverse_special_tokens_map = {}
+        self.special_tokens_pat = None
+        if special_tokens:
+            special_tokens = list(special_tokens)
+            self.special_tokens_pat = re.compile(
+                r"(" + r"|".join(re.escape(sp_tok) for sp_tok in special_tokens) + r")"
+            )
+            for i in range(len(special_tokens)):
+                self.special_tokens_map[special_tokens[i]] = len(self.vocab) + i
+                self.inverse_special_tokens_map[len(self.vocab) + i] = special_tokens[i]
 
-    def encode(self, text: str) -> List[int]:
-        words = re.findall(self.reg_pat, text)
-        token_seqs = [list(w.encode("utf-8")) for w in words]
+    def _encode_ordinary(self, chunk: str) -> List[int]:
+        chunk_splits = re.findall(self.reg_pat, chunk)
+        chunk_splits = [list(split.encode("utf-8")) for split in chunk_splits]
+        
         while True:
-            freq = BPE.get_stats(token_seqs)
+            freq = BPE.get_stats(chunk_splits)
             if not freq:
                 break
             pair = min(freq, key=lambda p: self.merges.get(p, float("inf")))
             if pair not in self.merges:
                 break
-            token_seqs = BPE.merge(token_seqs, pair, self.merges[pair])
+            
+            chunk_splits = BPE.merge(chunk_splits, pair, self.merges[pair])
+
+        return [token for split in chunk_splits for token in split]
+
+
+    def encode(self, text: str) -> List[int]:
+        ids = []
+        if self.special_tokens_pat:
+            chunks: List[str] = re.split(self.special_tokens_pat, text)
+        else:
+            return self._encode_ordinary(text)
         
-        return [tok for seq in token_seqs for tok in seq]
+        for chunk in chunks:
+            if chunk in self.special_tokens_map:
+                ids.append(self.special_tokens_map[chunk])
+            else:
+                ids.extend(self._encode_ordinary(chunk))
+
+        return ids
 
     def decode(self, tokens: List[int]) -> str:
-        _bytes = b"".join(self.vocab[token_id] for token_id in tokens)
-        return _bytes.decode(encoding="utf-8", errors="replace")
+        decoded_str = ""
+        _bytes = b""
+        for token in tokens:
+            if token in self.inverse_special_tokens_map:
+                decoded_str += _bytes.decode(encoding="utf-8", errors="replace")
+                decoded_str += self.inverse_special_tokens_map[token]
+                _bytes = b""
+            else:
+                _bytes += self.vocab[token]
+
+        if _bytes:
+            decoded_str += _bytes.decode(encoding="utf-8", errors="replace")
+        
+        return decoded_str
+
 
     @staticmethod
     def get_stats(tokens: List[List[int]]) -> Dict[Tuple, int]:
-            freq = defaultdict(int)
-            for seq in tokens:
-                for i in range(1, len(seq)):
-                    freq[seq[i-1], seq[i]] += 1
-            return freq
+        freq = defaultdict(int)
+        for seq in tokens:
+            for i in range(1, len(seq)):
+                freq[seq[i-1], seq[i]] += 1
+        return freq
 
     @staticmethod
     def merge(tokens: List[List[int]], pair: Tuple[int], new_id: int) -> List[List[int]]:
@@ -84,7 +127,7 @@ class BPE:
         return vocab
  
     @classmethod
-    def train(cls, text: str, num_merges: int, tokenizer_dir: str) -> "BPE":
+    def train(cls, text: str, num_merges: int, tokenizer_dir: str) -> None:
         merges: Dict[Tuple[int], int] = {}
         words = re.findall(pattern=BPE.reg_pat, string=text)
         tokens = [list(w.encode("utf-8")) for w in words]
@@ -111,19 +154,25 @@ class BPE:
         with open(vocab_path, "w") as f:
             json.dump({str(idx): list(byte_seq) for idx, byte_seq in vocab.items()}, f, indent=2)
         
-        return BPE(tokenizer_dir)
-
-        
 
 if __name__ == "__main__":
     with open("data/tinystories/train.txt", "r") as f:
         text = f.read()
     
-    tokenizer = BPE.train(
+    BPE.train(
         text=text,
         num_merges=3000,
         tokenizer_dir="tokenizer"
     )
-    string = "Hi how are you?"
+
+    special_tokens = {"<|im_start|>", "<|im_end>", "<|endoftext|>"}
+    tokenizer = BPE("tokenizer", special_tokens=special_tokens)
+
+    string = """
+<|im_start|>
+Hi how are you?
+<|im_end|>
+<|endoftext|>
+"""
     print(f"encoded: {tokenizer.encode(string)}")
     print(f"decoded: {tokenizer.decode(tokenizer.encode(string))}")
