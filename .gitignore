@@ -3,3 +3,4 @@ venv
 test*.*
 data/
 *.json
+__pycache__/
