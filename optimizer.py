@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from torch.nn import Parameter
 from typing import Iterable, Optional
 
@@ -90,3 +90,34 @@ class AdaDelta(Optimizer):
                 p.data -= delta
                 # update ema for delta
                 param_diff_squared.mul_(self.alpha).add_((1 - self.alpha) * delta ** 2)
+
+
+class Adam(Optimizer):
+
+    def __init__(self, params: Iterable[Parameter], lr: float=1e-3, beta_1: float=0.9, beta_2: float=0.999, eps: float=1e-8) -> None:
+        super().__init__(lr, params)
+        self.beta_1 = beta_1
+        self.beta_2 = beta_2    
+        self.eps = eps
+        self.t = 0
+
+        for p in self.params:
+            self.state[p] = {
+                "m": torch.zeros_like(p),
+                "v": torch.zeros_like(p)
+            }
+    
+    def step(self) -> None:
+        self.t += 1
+        for p in self.params:
+            if p.requires_grad and p.grad is not None:
+                m: torch.Tensor = self.state[p]['m']
+                v: torch.Tensor = self.state[p]["v"]
+                # adam update
+                m.mul_(self.beta_1).add_((1 - self.beta_1) * p.grad)
+                v.mul_(self.beta_2).add_((1 - self.beta_2) * p.grad ** 2)
+                # remove bias
+                m_hat = m / (1 - self.beta_1 ** self.t)
+                v_hat = v / (1 - self.beta_2 ** self.t)
+
+                p.data -= self.lr * (m_hat / (torch.sqrt(v_hat) + self.eps))
