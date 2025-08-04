@@ -1,0 +1,25 @@
+Step 50 | loss = 7.0552
+Step 100 | loss = 5.6515
+Step 150 | loss = 5.1896
+Step 200 | loss = 4.8896
+Step 250 | loss = 4.5427
+Step 300 | loss = 4.5202
+Step 350 | loss = 4.3917
+Step 400 | loss = 4.2702
+Step 450 | loss = 4.0240
+Step 500 | loss = 3.9344
+Step 500 | val loss = 4.1372 | ppl: 62.6243
+Generation at step 500: I am going to play with a big house. They liked to play with a big tree. They saw a big tree. They were very happy and the park.
+
+Step 550 | loss = 4.0726
+Step 600 | loss = 4.0301
+Step 650 | loss = 4.1176
+Step 700 | loss = 3.8091
+Step 750 | loss = 3.7666
+Step 800 | loss = 3.8827
+Step 850 | loss = 3.7269
+Step 900 | loss = 3.7447
+Step 950 | loss = 3.8192
+Step 1000 | loss = 3.7001
+Step 1000 | val loss = 3.7538 | ppl: 42.6848
+Generation at step 1000: I am going to play with her mom. She was very happy and her mommy and her mommy was very happy. She had a big tree and said, "
